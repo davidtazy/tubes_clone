@@ -1,8 +1,5 @@
 #include "tube.h"
 #include <algorithm>
-void Tube::Reset() {
-  path.clear();
-}
 
 const bool Tube::IsNewPoint(const Position & pos) const {
   using std::begin;
