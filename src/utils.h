@@ -106,23 +106,25 @@ struct Tube {
     return ret;
   }
 
-  bool IsEndPoint(const Position & pos) const {
+  void StartFrom(const Position & pos) {
+    if (IsEndPoint(pos)) {
+      path.clear();
+    } else {
 
-    // discard endpoint if there is an ongoing tube
-    if (path.size() && path.front() == pos) {
-      return false;
+      auto it = std::find(std::begin(path), std::end(path), pos);
+      if (it == std::end(path)) {
+        throw std::runtime_error("pos is not end point, neither in path");
+      }
+
+      path.erase(it, std::end(path));
     }
-
-    // discard endpoint if it is a complete tube
-    if (path.size() && path.back() == pos) {
-      return false;
-    }
-
-    return (end_points.find(pos) != end_points.end());
+    Insert(pos);
   }
 
-  bool IsInProgressPoint(const Position & pos) const {
-    return path.size() && path.back() == pos && (end_points.find(pos) == end_points.end());
+  bool IsEndPoint(const Position & pos) const {
+    return std::any_of(std::begin(end_points), std::end(end_points), [pos](const auto & p) {
+      return p == pos;
+    });
   }
 };
 

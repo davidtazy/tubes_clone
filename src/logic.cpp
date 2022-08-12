@@ -38,7 +38,7 @@ void GameLogic::mousePressEvent(const Position & pos) {
   if (CanStartFromThisPosition(pos, color)) {
     current_color = color;
     current_tube = &tubes[color];
-    current_tube->Insert(pos);
+    current_tube->StartFrom(pos);
     update();
   }
 }
@@ -50,23 +50,7 @@ void GameLogic::mouseReleaseEvent() {
 bool GameLogic::CanStartFromThisPosition(const Position & pos, Color color) const {
 
   // Cannot start from a empty/black cell
-  if (color == Color::Black) {
-    return false;
-  }
-
-  auto & tube = tubes.at(color);
-
-  // check if it is endpoint of a tube
-  if (tube.IsEndPoint(pos)) {
-    return true;
-  }
-
-  // check if it is in progress point of a tube
-  if (tube.IsInProgressPoint(pos)) {
-    return true;
-  }
-
-  return false;
+  return color != Color::Black;
 }
 
 void GameLogic::update() {

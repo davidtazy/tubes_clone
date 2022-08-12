@@ -132,27 +132,6 @@ TEST_CASE("game logic") {
     REQUIRE(game->GetBoard().at(pos01) == Color::Black);
   }
 
-  SECTION("do not draw if not a starting cell") {
-    FakeRenderer renderer;
-    auto game = GameBuilder()
-                  .with_board_size(3)
-                  .generate({ "bxx", "xxx", "xxb" })
-                  .with_renderer(&renderer)
-                  .build();
-
-    game->logic.mousePressEvent(pos00);
-    game->logic.mouseMoveEvent(pos10);
-    game->logic.mouseMoveEvent(pos20);
-    game->logic.mouseReleaseEvent();
-    REQUIRE(game->GetBoard().at(pos10) == Color::Blue);
-
-    game->logic.mousePressEvent(pos10);
-    game->logic.mouseMoveEvent(pos11);
-    game->logic.mouseReleaseEvent();
-
-    REQUIRE(game->GetBoard().at(pos11) == Color::Black);
-  }
-
   SECTION("can continue draw from uncomplete tube") {
     FakeRenderer renderer;
     auto game = GameBuilder()
@@ -173,7 +152,33 @@ TEST_CASE("game logic") {
     REQUIRE(game->GetBoard().at(pos21) == Color::Blue);
   }
 
-  SECTION("cannot start from beginning of the tube") {
+  SECTION("tube restart from user cell selection") {
+    FakeRenderer renderer;
+    auto game = GameBuilder()
+                  .with_board_size(3)
+                  .generate({ "bxx", "xxx", "xxb" })
+                  .with_renderer(&renderer)
+                  .build();
+
+    game->logic.mousePressEvent(pos00);
+    game->logic.mouseMoveEvent(pos10);
+    game->logic.mouseMoveEvent(pos20);
+    game->logic.mouseReleaseEvent();
+    //pos20 is now on the path
+    REQUIRE(game->GetBoard().at(pos20) == Color::Blue);
+
+    game->logic.mousePressEvent(pos10);
+    game->logic.mouseMoveEvent(pos11);
+    game->logic.mouseReleaseEvent();
+
+    // pos20 is no more on the path
+    REQUIRE(game->GetBoard().at(pos20) == Color::Black);
+
+    //Pos11 is now on the path
+    REQUIRE(game->GetBoard().at(pos11) == Color::Blue);
+  }
+
+  SECTION("when tube is in progress, starting from other endpoints remove all path") {
     FakeRenderer renderer;
     auto game = GameBuilder()
                   .with_board_size(3)
@@ -186,15 +191,17 @@ TEST_CASE("game logic") {
     game->logic.mouseMoveEvent(pos10);
     game->logic.mouseMoveEvent(pos20);
     game->logic.mouseReleaseEvent();
-    //pause in drawing tube
-    game->logic.mousePressEvent(pos00);
-    game->logic.mouseMoveEvent(pos01);
+    //restarting from other ends point
+    game->logic.mousePressEvent(pos22);
+    game->logic.mouseMoveEvent(pos22);
     game->logic.mouseReleaseEvent();
 
-    REQUIRE(game->GetBoard().at(pos01) == Color::Black);
+    // tube is emptied
+    REQUIRE(game->GetBoard().at(pos10) == Color::Black);
+    REQUIRE(game->GetBoard().at(pos20) == Color::Black);
   }
 
-  SECTION("cannot start from endpoint of a complete tube") {
+  SECTION("when tube is complete, starting from any endpoints remove all path") {
     FakeRenderer renderer;
     auto game = GameBuilder()
                   .with_board_size(3)
@@ -211,9 +218,11 @@ TEST_CASE("game logic") {
     game->logic.mouseReleaseEvent();
     //pause in drawing tube
     game->logic.mousePressEvent(pos22);
-    game->logic.mouseMoveEvent(pos12);
+    game->logic.mouseMoveEvent(pos22);
     game->logic.mouseReleaseEvent();
 
-    REQUIRE(game->GetBoard().at(pos12) == Color::Black);
+    REQUIRE(game->GetBoard().at(pos21) == Color::Black);
+    REQUIRE(game->GetBoard().at(pos10) == Color::Black);
+    REQUIRE(game->GetBoard().at(pos20) == Color::Black);
   }
 }
