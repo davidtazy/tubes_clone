@@ -70,6 +70,29 @@ struct Grid {
     }
   }
 
+  std::vector<Position> CardinalNeighbors(const Position & pos) const {
+    std::vector<Position> candidates{
+      { Col(pos.col + 1), Row(pos.row) },
+      { Col(pos.col - 1), Row(pos.row) },
+      { Col(pos.col), Row(pos.row + 1) },
+      { Col(pos.col), Row(pos.row - 1) }
+    };
+    std::vector<Position> ret;
+    int size = this->size();
+    std::copy_if(candidates.begin(), candidates.end(), std::back_inserter(ret), [size](const Position & pos) {
+      if (pos.col < 0 || pos.row < 0) {
+        return false;
+      }
+      if ((pos.col >= size) || (pos.row >= size)) {
+        return false;
+      }
+      return true;
+    });
+
+    return ret;
+  }
+
+private:
   std::vector<std::vector<Cell>> grid;
 };
 
@@ -125,6 +148,42 @@ struct Tube {
     return std::any_of(std::begin(end_points), std::end(end_points), [pos](const auto & p) {
       return p == pos;
     });
+  }
+
+  bool IsComplete() const {
+
+    if (path.size() < 2) {
+      return false;
+    }
+
+    return IsEndPoint(path.front()) && IsEndPoint(path.back());
+  }
+
+  std::optional<Position> LastPointInPath() const {
+    if (path.size() < 2) {
+      return std::nullopt;
+    }
+
+    return { path.back() };
+  }
+
+  void TryToComplete(const std::vector<Position> & neighbors) {
+    if (IsComplete()) {
+      return;
+    }
+
+    auto other_end_point = *end_points.begin();
+    if (!IsNewPoint(other_end_point)) {
+      other_end_point = *end_points.rbegin();
+    }
+
+    //check if one neighbors is the other endpoint
+
+    if (auto it = std::find(neighbors.begin(), neighbors.end(), other_end_point);
+        it != neighbors.end()) {
+      //it is, so add it
+      Insert(other_end_point);
+    }
   }
 };
 

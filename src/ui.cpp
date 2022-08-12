@@ -43,6 +43,7 @@ void Rendered::paintEvent(QPaintEvent *) {
   painter.restore();
 
   //draw grids
+  painter.setPen(Qt::white);
   auto lines_to_draw = dh.CalcLines(board.size());
   for (const auto & line : lines_to_draw) {
     QLine qline{ line.a.x, line.a.y, line.b.x, line.b.y };

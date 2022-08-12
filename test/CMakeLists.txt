@@ -3,5 +3,5 @@ project(tests_tubes_clone)
 
 find_package(Catch2 REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp test_core.cpp)
+add_executable(${PROJECT_NAME} main.cpp test_core.cpp test_behavior.cpp)
 target_link_libraries(${PROJECT_NAME} PRIVATE TubesLib Catch2::Catch2)

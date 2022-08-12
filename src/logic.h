@@ -28,6 +28,10 @@ public:
 
   const Board & GetBoard() const { return board; };
 
+  bool IsTubeComplete(Color color) const;
+
+  bool IsComplete() const;
+
 private:
   void update();
 

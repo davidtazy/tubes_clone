@@ -43,6 +43,13 @@ void GameLogic::mousePressEvent(const Position & pos) {
   }
 }
 void GameLogic::mouseReleaseEvent() {
+
+  if (current_tube && current_tube->LastPointInPath().has_value()) {
+    auto last_pos = current_tube->LastPointInPath().value();
+    current_tube->TryToComplete(board.CardinalNeighbors(last_pos));
+    update();
+  }
+
   current_color = std::nullopt;
   current_tube = nullptr;
 }
@@ -73,4 +80,22 @@ void GameLogic::update() {
   if (view) {
     view->update(board);
   }
+}
+
+bool GameLogic::IsTubeComplete(Color color) const {
+  auto it = tubes.find(color);
+  if (it == tubes.end()) {
+    return false;
+  }
+
+  const auto & tube = it->second;
+
+  return tube.IsComplete();
+}
+
+bool GameLogic::IsComplete() const {
+
+  return std::all_of(tubes.begin(), tubes.end(), [](const auto & p) {
+    return p.second.IsComplete();
+  });
 }
