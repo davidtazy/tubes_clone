@@ -22,6 +22,7 @@ struct Tube {
   bool IsEndPoint(const Position & pos) const;
   bool IsComplete() const;
   std::optional<Position> LastPointInPath() const;
+  bool IsNeighborToLastPointInPath(const Position & pos) const;
 };
 
 struct Tubes {

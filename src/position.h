@@ -32,6 +32,11 @@ struct Position {
     return hash() < other.hash();
   }
 
+  bool IsNeighbor(const Position & other) const {
+    return (other.col == col && (std::abs(other.row - row) == 1)) ||
+           (other.row == row && (std::abs(other.col - col) == 1));
+  }
+
 private:
   int hash() const {
     return 10000 * col + row;

@@ -19,19 +19,6 @@ GameLogic::GameLogic(const Board & board)
   }
 }
 
-void GameLogic::mouseMoveEvent(const Position & pos) {
-  auto color = board.at(pos);
-
-  if (current_color.has_value()              // filter if drawing not started
-      && (color == Color::Black              // fill empty cell
-          || current_color.value() == color) //tube path  also contains endpoints
-  ) {
-
-    if (current_tube->Insert(pos)) {
-      update();
-    }
-  }
-}
 void GameLogic::mousePressEvent(const Position & pos) {
   auto color = board.at(pos);
   if (CanStartFromThisPosition(pos, color)) {
@@ -41,6 +28,22 @@ void GameLogic::mousePressEvent(const Position & pos) {
     update();
   }
 }
+
+void GameLogic::mouseMoveEvent(const Position & pos) {
+  auto color = board.at(pos);
+
+  if (current_color.has_value()                          // filter if drawing not started
+      && (color == Color::Black                          // fill empty cell
+          || current_color.value() == color)             //tube path  also contains endpoints
+      && current_tube->IsNeighborToLastPointInPath(pos)) //check if next Cell is the neighbor of the last position in path
+  {
+
+    if (current_tube->Insert(pos)) {
+      update();
+    }
+  }
+}
+
 void GameLogic::mouseReleaseEvent() {
 
   if (current_tube && current_tube->LastPointInPath().has_value()) {

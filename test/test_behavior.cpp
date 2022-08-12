@@ -187,4 +187,21 @@ TEST_CASE("game logic") {
 
     REQUIRE(game->logic.IsTubeComplete(Color::Blue));
   }
+
+  SECTION("when drawing, cann only go to neighbor ") {
+    FakeRenderer renderer;
+    auto game = GameBuilder()
+                  .with_board_size(3)
+                  .generate({ "bxx", "xxx", "xxb" })
+                  .with_renderer(&renderer)
+                  .build();
+
+    game->logic.mousePressEvent(pos00);
+    game->logic.mouseMoveEvent(pos00);
+    game->logic.mouseMoveEvent(pos20);
+
+    game->logic.mouseReleaseEvent();
+
+    REQUIRE(game->GetBoard().at(pos20) == Color::Black);
+  }
 }

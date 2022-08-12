@@ -52,11 +52,22 @@ bool Tube::IsComplete() const {
 }
 
 std::optional<Position> Tube::LastPointInPath() const {
-  if (path.size() < 2) {
+  if (path.empty()) {
     return std::nullopt;
   }
 
   return { path.back() };
+}
+
+bool Tube::IsNeighborToLastPointInPath(const Position & pos) const {
+
+  auto last_point = LastPointInPath();
+
+  if (!last_point.has_value()) {
+    return false;
+  }
+
+  return pos.IsNeighbor(last_point.value());
 }
 
 void Tube::TryToComplete(const std::vector<Position> & neighbors) {
