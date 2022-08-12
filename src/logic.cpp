@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <cassert>
 
-GameLogic::GameLogic(Board & board)
+GameLogic::GameLogic(const Board & board)
   : board(board) {
 
   board.ForEach([this](const Position & pos) {
@@ -22,10 +22,13 @@ GameLogic::GameLogic(Board & board)
 
 void GameLogic::mouseMoveEvent(const Position & pos) {
   auto color = board.at(pos);
-  if (current_color.has_value() && color == Color::Black) {
+
+  if (current_color.has_value()              // filter if drawing not started
+      && (color == Color::Black              // fill empty cell
+          || current_color.value() == color) //tube path  also contains endpoints
+  ) {
 
     if (current_tube->Insert(pos)) {
-      board.mutate(pos) = current_color.value();
       update();
     }
   }
@@ -46,9 +49,11 @@ void GameLogic::mouseReleaseEvent() {
 
 bool GameLogic::CanStartFromThisPosition(const Position & pos, Color color) const {
 
+  // Cannot start from a empty/black cell
   if (color == Color::Black) {
     return false;
   }
+
   auto & tube = tubes.at(color);
 
   // check if it is endpoint of a tube
@@ -61,14 +66,25 @@ bool GameLogic::CanStartFromThisPosition(const Position & pos, Color color) cons
     return true;
   }
 
-  // other tests to come
-
   return false;
 }
 
 void GameLogic::update() {
+
+  // clear board
+  board.ForEach([this](const Position & pos) {
+    this->board.mutate(pos) = Color::Black;
+  });
+
   //create board from tubes
-  // todo
+  for (const auto & [color, tube] : tubes) {
+    for (const auto & pos : tube.path) {
+      board.mutate(pos) = color;
+    }
+    for (const auto & pos : tube.end_points) {
+      board.mutate(pos) = color;
+    }
+  }
 
   if (view) {
     view->update(board);

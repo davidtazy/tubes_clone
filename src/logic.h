@@ -15,17 +15,23 @@ class GameLogic : public IInputListener {
   GameLogic & operator=(GameLogic &&) = delete;
 
 public:
-  explicit GameLogic(Board & board);
-  void SetRenderer(IRenderer * renderer) { view = renderer; };
+  explicit GameLogic(const Board & board);
+  void SetRenderer(IRenderer * renderer) {
+    view = renderer;
+    update();
+  };
   void mouseMoveEvent(const Position & pos) override;
   void mousePressEvent(const Position & pos) override;
   void mouseReleaseEvent() override;
 
   bool CanStartFromThisPosition(const Position & pos, Color color) const;
 
+  const Board & GetBoard() const { return board; };
+
 private:
   void update();
-  Board & board;
+
+  Board board;
   IRenderer * view{};
 
   std::map<Color, Tube> tubes;

@@ -5,19 +5,13 @@
 
 struct Game {
 
-  Board board;
   GameLogic logic;
   IRenderer * renderer{};
 
-  void update() {
-    if (renderer) {
-      renderer->update(board);
-    }
-  }
+  const Board & GetBoard() const { return logic.GetBoard(); }
 
   explicit Game(const Board & board)
-    : board(board),
-      logic(this->board) {}
+    : logic(board) {}
 };
 #include <memory>
 struct GameBuilder {
@@ -80,8 +74,6 @@ struct GameBuilder {
       renderer->SetInputListener(&game->logic);
       game->logic.SetRenderer(renderer);
     }
-
-    game->update();
 
     return std::move(game);
   }

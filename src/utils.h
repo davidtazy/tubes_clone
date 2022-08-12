@@ -122,7 +122,7 @@ struct Tube {
   }
 
   bool IsInProgressPoint(const Position & pos) const {
-    return path.size() && path.back() == pos;
+    return path.size() && path.back() == pos && (end_points.find(pos) == end_points.end());
   }
 };
 

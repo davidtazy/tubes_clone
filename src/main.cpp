@@ -14,13 +14,5 @@ int main(int argc, char ** argv) {
   app.setQuitOnLastWindowClosed(true);
   view.show();
 
-  /*
-  QTimer timer;
-  timer.setInterval(100);
-  QObject::connect(&timer, &QTimer::timeout, [&game]() {
-    game->update();
-  });
-  timer.start();
-*/
   return app.exec();
 }

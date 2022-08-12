@@ -118,7 +118,7 @@ TEST_CASE("game logic") {
     game->logic.mouseMoveEvent(pos01);
     game->logic.mouseReleaseEvent();
 
-    REQUIRE(game->board.at(pos01) == Color::Blue);
+    REQUIRE(game->GetBoard().at(pos01) == Color::Blue);
   }
 
   SECTION("do not draw if first pressing on black cell") {
@@ -129,7 +129,7 @@ TEST_CASE("game logic") {
     game->logic.mouseMoveEvent(pos01);
     game->logic.mouseReleaseEvent();
 
-    REQUIRE(game->board.at(pos01) == Color::Black);
+    REQUIRE(game->GetBoard().at(pos01) == Color::Black);
   }
 
   SECTION("do not draw if not a starting cell") {
@@ -140,13 +140,17 @@ TEST_CASE("game logic") {
                   .with_renderer(&renderer)
                   .build();
 
-    game->board.mutate(pos10) = Color::Blue;
+    game->logic.mousePressEvent(pos00);
+    game->logic.mouseMoveEvent(pos10);
+    game->logic.mouseMoveEvent(pos20);
+    game->logic.mouseReleaseEvent();
+    REQUIRE(game->GetBoard().at(pos10) == Color::Blue);
 
     game->logic.mousePressEvent(pos10);
     game->logic.mouseMoveEvent(pos11);
     game->logic.mouseReleaseEvent();
 
-    REQUIRE(game->board.at(pos11) == Color::Black);
+    REQUIRE(game->GetBoard().at(pos11) == Color::Black);
   }
 
   SECTION("can continue draw from uncomplete tube") {
@@ -166,7 +170,7 @@ TEST_CASE("game logic") {
     game->logic.mouseMoveEvent(pos21);
     game->logic.mouseReleaseEvent();
 
-    REQUIRE(game->board.at(pos21) == Color::Blue);
+    REQUIRE(game->GetBoard().at(pos21) == Color::Blue);
   }
 
   SECTION("cannot start from beginning of the tube") {
@@ -187,7 +191,7 @@ TEST_CASE("game logic") {
     game->logic.mouseMoveEvent(pos01);
     game->logic.mouseReleaseEvent();
 
-    REQUIRE(game->board.at(pos01) == Color::Black);
+    REQUIRE(game->GetBoard().at(pos01) == Color::Black);
   }
 
   SECTION("cannot start from endpoint of a complete tube") {
@@ -210,6 +214,6 @@ TEST_CASE("game logic") {
     game->logic.mouseMoveEvent(pos12);
     game->logic.mouseReleaseEvent();
 
-    REQUIRE(game->board.at(pos12) == Color::Black);
+    REQUIRE(game->GetBoard().at(pos12) == Color::Black);
   }
 }
