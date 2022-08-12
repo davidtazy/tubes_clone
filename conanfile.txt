@@ -1,0 +1,13 @@
+[requires]
+qt/[<6]
+
+[build_requires]
+catch2/[<3]
+
+[generators]
+cmake_find_package
+cmake_paths
+qt
+
+[options]
+*:shared=True
