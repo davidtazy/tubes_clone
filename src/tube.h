@@ -13,7 +13,6 @@ struct Tube {
   std::vector<Position> path;
   std::set<Position> end_points;
 
-  void Reset();
   bool Insert(const Position & pos);
   void StartFrom(const Position & pos);
   void TryToComplete(const std::vector<Position> & neighbors);
