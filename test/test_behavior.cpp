@@ -1,7 +1,6 @@
 #include "board.h"
 #include "catch2/catch.hpp"
 #include "game.h"
-#include "ui.h"
 #include <iostream>
 #include <vector>
 
