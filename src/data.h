@@ -1,6 +1,9 @@
 #pragma once
 #include <string>
 #include <vector>
+
+// these level where generated with https://github.com/thomasahle/numberlink tool
+
 static const std::vector<std::string> levels_str = { R"_(5 5
 0 0 1 4 0 
 1 2 0 0 0 
