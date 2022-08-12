@@ -1,6 +1,8 @@
 #include "logic.h"
+#include "position.h"
 #include <algorithm>
 #include <cassert>
+#include <functional>
 
 GameLogic::GameLogic(const Board & board)
   : board(board) {
@@ -8,15 +10,12 @@ GameLogic::GameLogic(const Board & board)
   board.ForEach([this](const Position & pos) {
     auto color = this->board.at(pos);
     if (color != Color::Black) {
-      auto & tube = this->tubes[color];
-      tube.end_points.insert(pos);
+      this->tubes.AddEndPoint(color, pos);
     }
   });
 
-  assert(tubes.size());
-
-  for (const auto & [color, tube] : tubes) {
-    assert(tube.end_points.size() == 2);
+  if (!tubes.IsValid()) {
+    throw std::runtime_error("GameLogic init from board failed");
   }
 }
 
@@ -37,7 +36,7 @@ void GameLogic::mousePressEvent(const Position & pos) {
   auto color = board.at(pos);
   if (CanStartFromThisPosition(pos, color)) {
     current_color = color;
-    current_tube = &tubes[color];
+    current_tube = &tubes.Mutate(color);
     current_tube->StartFrom(pos);
     update();
   }
@@ -68,34 +67,23 @@ void GameLogic::update() {
   });
 
   //create board from tubes
-  for (const auto & [color, tube] : tubes) {
-    for (const auto & pos : tube.path) {
-      board.mutate(pos) = color;
-    }
-    for (const auto & pos : tube.end_points) {
-      board.mutate(pos) = color;
-    }
-  }
+  tubes.WalkPaths([this](const Position & pos, Color color) {
+    this->board.mutate(pos) = color;
+  });
+  tubes.WalkEndPoints([this](const Position & pos, Color color) {
+    this->board.mutate(pos) = color;
+  });
 
   if (view) {
-    view->update(board);
+    view->update(board, tubes);
   }
 }
 
 bool GameLogic::IsTubeComplete(Color color) const {
-  auto it = tubes.find(color);
-  if (it == tubes.end()) {
-    return false;
-  }
-
-  const auto & tube = it->second;
-
-  return tube.IsComplete();
+  return tubes.IsTubeComplete(color);
 }
 
 bool GameLogic::IsComplete() const {
 
-  return std::all_of(tubes.begin(), tubes.end(), [](const auto & p) {
-    return p.second.IsComplete();
-  });
+  return tubes.IsComplete();
 }

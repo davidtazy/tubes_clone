@@ -1,7 +1,6 @@
 #pragma once
 #include "logic.h"
 #include "ui.h"
-#include "utils.h"
 
 struct Game {
 
@@ -51,6 +50,10 @@ struct GameBuilder {
             return Color::Red;
           case 'g':
             return Color::Green;
+          case 'o':
+            return Color::Orange;
+          case 'y':
+            return Color::Yellow;
           default:
             throw std::runtime_error("not handled color");
         }

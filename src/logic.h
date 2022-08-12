@@ -1,8 +1,9 @@
 #pragma once
 
 #include "board.h"
+#include "position.h"
 #include "renderer.h"
-#include "utils.h"
+#include "tube.h"
 #include <map>
 #include <optional>
 #include <set>
@@ -38,7 +39,7 @@ private:
   Board board;
   IRenderer * view{};
 
-  std::map<Color, Tube> tubes;
+  Tubes tubes;
 
   std::optional<Color> current_color;
   Tube * current_tube{};

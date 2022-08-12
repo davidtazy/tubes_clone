@@ -2,7 +2,7 @@
 #include "catch2/catch.hpp"
 #include "game.h"
 #include "ui.h"
-#include "utils.h"
+#include <iostream>
 #include <vector>
 
 const Position pos00{ Col(0), Row(0) };
@@ -15,12 +15,15 @@ const Position pos22{ Col(2), Row(2) };
 const Position pos12{ Col(1), Row(2) };
 
 struct FakeRenderer : IRenderer {
-  void update(const Board & board) override {
+  void update(const Board & board, const Tubes & tubes_p) override {
     cpt++;
+    tubes = tubes_p;
   }
   void SetInputListener(IInputListener * listener_p) override {}
 
   int cpt{ 0 };
+
+  Tubes tubes;
 };
 
 TEST_CASE("full game") {
@@ -43,6 +46,10 @@ TEST_CASE("full game") {
   game->logic.mouseReleaseEvent();
 
   REQUIRE(game->logic.IsComplete());
+
+  /*renderer.tubes.WalkPaths([](const Position & pos, Color color) {
+    std::cout << "color " << static_cast<int>(color) << " " << pos << "\n";
+  });*/
 }
 
 TEST_CASE("game logic") {

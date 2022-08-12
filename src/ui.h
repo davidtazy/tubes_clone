@@ -1,7 +1,7 @@
 #pragma once
 #include "board.h"
 #include "renderer.h"
-#include "utils.h"
+#include "tube.h"
 
 #include <QWidget>
 
@@ -9,7 +9,7 @@ struct Rendered : public IRenderer, public QWidget {
 
   using QWidget::QWidget;
 
-  void update(const Board & board) override;
+  void update(const Board & board, const Tubes & tubes) override;
 
   void paintEvent(QPaintEvent *) override;
 
@@ -22,5 +22,6 @@ protected:
 
 private:
   Board board{ 4 };
+  Tubes tubes;
   IInputListener * listener{};
 };

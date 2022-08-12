@@ -1,5 +1,6 @@
 #pragma once
-#include "utils.h"
+#include "board.h"
+#include "tube.h"
 
 struct IInputListener {
   virtual void mouseMoveEvent(const Position & pos) = 0;
@@ -9,6 +10,6 @@ struct IInputListener {
 
 struct IRenderer {
 
-  virtual void update(const Board & board) = 0;
+  virtual void update(const Board & board, const Tubes & tubes) = 0;
   virtual void SetInputListener(IInputListener * listener_p) = 0;
 };

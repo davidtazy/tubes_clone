@@ -1,8 +1,10 @@
 #include "ui.h"
+#include "ui_helper.h"
 #include <QPainter>
-
-void Rendered::update(const Board & board_p) {
+#include <QPainterPath>
+void Rendered::update(const Board & board_p, const Tubes & tubes_p) {
   board = board_p;
+  tubes = tubes_p;
   QWidget::update();
 }
 
@@ -16,7 +18,10 @@ QColor toQColor(Color col) {
       return Qt::red;
     case Color::Green:
       return Qt::green;
-
+    case Color::Orange:
+      return QColor(255, 175, 0);
+    case Color::Yellow:
+      return Qt::yellow;
     default:
       throw std::runtime_error("not handled color");
   }
@@ -42,6 +47,33 @@ void Rendered::paintEvent(QPaintEvent *) {
   });
   painter.restore();
 
+  //draw paths
+  std::map<Color, QVector<QPoint>> points;
+  tubes.WalkPaths([&points, &dh](const Position & pos, Color color) {
+    Point p = dh.toPoint(pos);
+    points[color].push_back({ p.x, p.y });
+  });
+
+  painter.save();
+  for (const auto & [color, lines] : points) {
+    QColor qcolor = toQColor(color);
+    QPen pen(qcolor.darker());
+    pen.setStyle(Qt::DotLine);
+    pen.setWidth(5);
+    painter.setPen(pen);
+
+    QPainterPath pp;
+    for (auto point : lines) {
+      if (pp.currentPosition() == QPointF{ 0, 0 }) {
+        pp.moveTo(point);
+      } else {
+        pp.lineTo(point);
+      }
+    }
+    painter.drawPath(pp);
+  }
+  painter.restore();
+
   //draw grids
   painter.setPen(Qt::white);
   auto lines_to_draw = dh.CalcLines(board.size());
@@ -50,12 +82,12 @@ void Rendered::paintEvent(QPaintEvent *) {
     painter.drawLine(qline);
   }
 
-  //draw txt
-  static int cpt = 0;
-  painter.setPen(Qt::white);
-  painter.setFont(QFont("Arial", 30));
-  painter.drawText(rect(), Qt::AlignCenter, QString(" %0").arg(cpt));
-  cpt++;
+  //draw win text
+  if (tubes.IsComplete()) {
+    painter.setPen(Qt::white);
+    painter.setFont(QFont("Arial", 30));
+    painter.drawText(rect(), Qt::AlignCenter, QString(" Win!!!"));
+  }
 }
 
 #include <QMouseEvent>

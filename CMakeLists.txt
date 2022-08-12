@@ -11,7 +11,8 @@ find_package(
   COMPONENTS Widgets
   REQUIRED)
 
-add_library(TubesLib STATIC src/utils.cpp src/ui.cpp src/logic.cpp)
+add_library(TubesLib STATIC src/utils.cpp src/ui.cpp src/logic.cpp src/tube.cpp
+                            src/ui_helper.cpp)
 target_include_directories(TubesLib PUBLIC src)
 target_link_libraries(TubesLib Qt5::Widgets)
 

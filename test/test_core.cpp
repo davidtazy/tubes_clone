@@ -1,6 +1,7 @@
-#include "board.h"
-#include "catch2/catch.hpp"
+
+#include "ui_helper.h"
 #include "utils.h"
+#include <catch2/catch.hpp>
 
 struct Cell {
   int val{};
@@ -103,4 +104,14 @@ TEST_CASE("calc position from point in widget") {
     REQUIRE_THROWS(dh.toPosition(201, 50));
     REQUIRE_THROWS(dh.toPosition(100, 101));
   }
+}
+
+TEST_CASE("test Position to Point conversion") {
+  const int w{ 200 };
+  const int h{ 100 };
+  const int board_size{ 2 };
+  DrawHelper dh{ w, h, board_size };
+
+  REQUIRE(dh.toPoint({ Col{ 0 }, Row{ 0 } }) == Point{ 50, 25 });
+  REQUIRE(dh.toPoint({ Col{ 1 }, Row{ 1 } }) == Point{ 150, 75 });
 }

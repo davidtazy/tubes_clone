@@ -3,7 +3,7 @@ qt/[<6]
 
 [build_requires]
 catch2/[<3]
-
+kcov/40
 [generators]
 cmake_find_package
 cmake_paths
