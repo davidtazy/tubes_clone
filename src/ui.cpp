@@ -120,3 +120,27 @@ void Rendered::mouseReleaseEvent(QMouseEvent * event) {
     listener->mouseReleaseEvent();
   }
 }
+
+#include <QPushButton>
+#include <QVBoxLayout>
+#include <iostream>
+MainWindow::MainWindow(Rendered * board_view) {
+  auto layout = new QVBoxLayout;
+  layout->addWidget(board_view);
+
+  auto next_level = new QPushButton("Next Level 1");
+  layout->addWidget(next_level);
+
+  connect(next_level, &QPushButton::clicked, [this, board_view, next_level]() {
+    this->game = GameBuilder().with_level(this->level).with_renderer(board_view).build();
+    this->level++;
+    level %= 10;
+    next_level->setText(QString("Next Level %0 ").arg(level));
+  });
+
+  game = GameBuilder().with_level(level).with_renderer(board_view).build();
+  level++;
+
+  this->setLayout(layout);
+  this->setMinimumSize(400, 400);
+}

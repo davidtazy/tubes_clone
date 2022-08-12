@@ -27,7 +27,7 @@ struct FakeRenderer : IRenderer {
 
 TEST_CASE("full game") {
   FakeRenderer renderer;
-  auto game = GameBuilder().with_board_size(3).generate({ "brg", "xxx", "brg" }).with_renderer(&renderer).build();
+  auto game = GameBuilder().generate({ "brg", "xxx", "brg" }).with_renderer(&renderer).build();
 
   game->logic.mousePressEvent(pos00);
   game->logic.mouseMoveEvent(pos01);
@@ -55,7 +55,7 @@ TEST_CASE("game logic") {
 
   SECTION("draw if first pressing on colored cell") {
     FakeRenderer renderer;
-    auto game = GameBuilder().with_board_size(2).generate({ "b ", " b" }).with_renderer(&renderer).build();
+    auto game = GameBuilder().generate({ "b ", " b" }).with_renderer(&renderer).build();
 
     game->logic.mousePressEvent(pos00);
     game->logic.mouseMoveEvent(pos01);
@@ -66,7 +66,7 @@ TEST_CASE("game logic") {
 
   SECTION("do not draw if first pressing on black cell") {
     FakeRenderer renderer;
-    auto game = GameBuilder().with_board_size(2).generate({ "b ", " b" }).with_renderer(&renderer).build();
+    auto game = GameBuilder().generate({ "b ", " b" }).with_renderer(&renderer).build();
 
     game->logic.mousePressEvent(pos01);
     game->logic.mouseMoveEvent(pos01);
@@ -78,7 +78,6 @@ TEST_CASE("game logic") {
   SECTION("can continue draw from uncomplete tube") {
     FakeRenderer renderer;
     auto game = GameBuilder()
-                  .with_board_size(3)
                   .generate({ "bxx", "xxx", "xxb" })
                   .with_renderer(&renderer)
                   .build();
@@ -98,7 +97,7 @@ TEST_CASE("game logic") {
   SECTION("tube restart from user cell selection") {
     FakeRenderer renderer;
     auto game = GameBuilder()
-                  .with_board_size(3)
+
                   .generate({ "bxx", "xxx", "xxb" })
                   .with_renderer(&renderer)
                   .build();
@@ -124,7 +123,7 @@ TEST_CASE("game logic") {
   SECTION("when tube is in progress, starting from other endpoints remove all path") {
     FakeRenderer renderer;
     auto game = GameBuilder()
-                  .with_board_size(3)
+
                   .generate({ "bxx", "xxx", "xxb" })
                   .with_renderer(&renderer)
                   .build();
@@ -147,7 +146,7 @@ TEST_CASE("game logic") {
   SECTION("when tube is complete, starting from any endpoints remove all path") {
     FakeRenderer renderer;
     auto game = GameBuilder()
-                  .with_board_size(3)
+
                   .generate({ "bxx", "xxx", "xxb" })
                   .with_renderer(&renderer)
                   .build();
@@ -172,7 +171,7 @@ TEST_CASE("game logic") {
   SECTION("when mouse released, game automaticaly complete the path if last point in path is neighbor of the endpoint") {
     FakeRenderer renderer;
     auto game = GameBuilder()
-                  .with_board_size(3)
+
                   .generate({ "bxx", "xxx", "xxb" })
                   .with_renderer(&renderer)
                   .build();
@@ -190,7 +189,7 @@ TEST_CASE("game logic") {
   SECTION("when drawing, cann only go to neighbor ") {
     FakeRenderer renderer;
     auto game = GameBuilder()
-                  .with_board_size(3)
+
                   .generate({ "bxx", "xxx", "xxb" })
                   .with_renderer(&renderer)
                   .build();

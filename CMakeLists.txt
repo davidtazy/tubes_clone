@@ -12,8 +12,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 include(${CMAKE_BINARY_DIR}/conan_paths.cmake)
 
 # Create library to gather game logic in plain cpp
-add_library(TubesLib STATIC src/utils.cpp src/logic.cpp src/tube.cpp
-                            src/ui_helper.cpp src/game.cpp)
+add_library(
+  TubesLib STATIC src/utils.cpp src/logic.cpp src/tube.cpp src/ui_helper.cpp
+                  src/game.cpp src/level_builder.cpp)
 target_include_directories(TubesLib PUBLIC src)
 target_link_libraries(TubesLib)
 

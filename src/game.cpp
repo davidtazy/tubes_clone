@@ -1,12 +1,14 @@
 #include "game.h"
-
-GameBuilder & GameBuilder::with_board_size(int size) {
-  board_size = size;
-  return *this;
-}
+#include "data.h"
+#include "level_builder.h"
 
 GameBuilder & GameBuilder::with_renderer(IRenderer * renderer) {
   this->renderer = renderer;
+  return *this;
+}
+
+GameBuilder & GameBuilder::with_level(int level) {
+  this->level = level;
   return *this;
 }
 
@@ -17,13 +19,12 @@ GameBuilder & GameBuilder::generate(const std::vector<std::string> & pattern) {
 
 std::unique_ptr<Game> GameBuilder::build() {
 
-  if (board_size <= 0) {
-    throw std::runtime_error("cannot greate a game with board size null");
-  }
-
-  Board board{ board_size };
+  std::unique_ptr<Board> board;
 
   if (pattern.size()) {
+
+    board = std::make_unique<Board>(pattern.size());
+
     auto to_color = [](char c) {
       switch (c) {
         case 'x':
@@ -47,15 +48,17 @@ std::unique_ptr<Game> GameBuilder::build() {
     for (int row = 0; row < pattern.size(); row++) {
       std::string srow = pattern.at(row);
       for (int col = 0; col < srow.size(); col++) {
-        board.mutate({ Col(col), Row(row) }) = to_color(srow.at(col));
+        board->mutate({ Col(col), Row(row) }) = to_color(srow.at(col));
       }
     }
+  } else if (level >= 0 && level < levels_str.size()) {
+    board = std::make_unique<Board>(LevelBuilder::Gen(levels_str[level]));
+
   } else {
-    //generate from random
-    //todo
+    return {};
   }
 
-  auto game = std::make_unique<Game>(board);
+  auto game = std::make_unique<Game>(*board);
 
   if (renderer) {
     game->renderer = renderer;

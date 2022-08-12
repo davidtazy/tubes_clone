@@ -115,3 +115,17 @@ TEST_CASE("test Position to Point conversion") {
   REQUIRE(dh.toPoint({ Col{ 0 }, Row{ 0 } }) == Point{ 50, 25 });
   REQUIRE(dh.toPoint({ Col{ 1 }, Row{ 1 } }) == Point{ 150, 75 });
 }
+#include "data.h"
+#include "level_builder.h"
+
+TEST_CASE("can generate board from data") {
+
+  auto board = LevelBuilder::Gen(
+    levels_str[0]);
+
+  REQUIRE(board.size() == 5);
+  REQUIRE(board.at({ Col{ 0 }, Row{ 0 } }) == Color::Black);
+  REQUIRE(board.at({ Col{ 3 }, Row{ 0 } }) == Color::Yellow);
+
+  REQUIRE(board.at({ Col{ 3 }, Row{ 4 } }) == Color::Orange);
+}

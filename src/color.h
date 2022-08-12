@@ -1,7 +1,7 @@
 #pragma once
 
 enum class Color {
-  Black,
+  Black = 0,
   Red,
   Blue,
   Green,

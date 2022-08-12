@@ -7,13 +7,15 @@
 int main(int argc, char ** argv) {
 
   QApplication app(argc, argv);
-
-  Rendered view;
-  //auto game = GameBuilder().with_board_size(3).generate({ "brg", "xxx", "brg" }).with_renderer(&view).build();
-  auto game = GameBuilder().with_board_size(5).generate({ "xxgyb", "xxxxx", "gxxox", "xxxrb", "yoxxr" }).with_renderer(&view).build();
-
   app.setQuitOnLastWindowClosed(true);
-  view.show();
+
+  auto view = new Rendered; //qt handle lifecycle
+  //auto game = GameBuilder().generate({ "brg", "xxx", "brg" }).with_renderer(&view).build();
+  //auto game = GameBuilder().generate({ "xxgyb", "xxxxx", "gxxox", "xxxrb", "yoxxr" }).with_renderer(&view).build();
+
+  MainWindow main_view(view);
+
+  main_view.show();
 
   return app.exec();
 }

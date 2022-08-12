@@ -1,5 +1,6 @@
 #pragma once
 #include "board.h"
+#include "game.h"
 #include "renderer.h"
 #include "tube.h"
 
@@ -24,4 +25,13 @@ private:
   Board board{ 4 };
   Tubes tubes;
   IInputListener * listener{};
+};
+
+#include <QMainWindow>
+struct MainWindow : public QWidget {
+
+  MainWindow(Rendered * board_view);
+
+  std::unique_ptr<Game> game;
+  int level{ 0 };
 };
